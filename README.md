@@ -9,13 +9,4 @@
 
 ## 容器
 
-```shell
-docker build . -t pdf-viewer:latest -f ./Dockerfile
-docker build . -t pdf-viewer:1.0.0 -t pdf-viewer:latest -f ./Dockerfile
-```
-
-## 启动容器
-
-```shell
-docker run --name 'fiu-pdf-viewer' -d --restart=always -p 6781:80 pdf-viewer:latest
-```
+启动 Docker 后，在终端执行 `make deploy` 即可运行起来。
