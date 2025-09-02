@@ -4,8 +4,8 @@
 
 - [ ] [mozilla/pdf.js](https://github.com/mozilla/pdf.js) v5.3.93 全部功能
 - [X] 无 `file origin does not match viewer's` 报错
-- [X] 亮、暗色切换（`?t=2`）
-- [X] 显隐工具栏
+- [X] 亮、暗色切换（`?t=2`, `1` 亮色，`2` 暗色）
+- [X] 显隐工具栏（`?b=0`，`0` 隐藏，`1` 显示）
 
 ## 容器
 

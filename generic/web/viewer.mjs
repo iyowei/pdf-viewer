@@ -1293,6 +1293,104 @@ class PDFLinkService {
       if (params.has("nameddest")) {
         this.goToDestination(params.get("nameddest"));
       }
+      // 处理工具栏隐藏参数 ?b=0 隐藏工具栏, ?b=1 显示工具栏, 默认显示
+      if (params.has("b")) {
+        const toolbarParam = params.get("b");
+        if (toolbarParam === "0") {
+          // 完全隐藏工具栏和侧边栏，但保留进度条在顶部
+          const toolbar = document.querySelector(".toolbar");
+          const sidebarContainer = document.getElementById("sidebarContainer");
+          const loadingBar = document.getElementById("loadingBar");
+          const mainContainer = document.getElementById("mainContainer");
+          const viewerContainer = document.getElementById("viewerContainer");
+          
+          if (toolbar) {
+            toolbar.style.display = "none";
+          }
+          
+          if (sidebarContainer) {
+            sidebarContainer.style.display = "none";
+          }
+          
+          // 将进度条移到顶部，脱离工具栏容器，并复制原有样式
+          if (loadingBar && document.body) {
+            // 先移到 body 下
+            document.body.appendChild(loadingBar);
+            
+            // 应用顶部固定定位样式
+            loadingBar.style.cssText = `
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              right: 0 !important;
+              z-index: 9999 !important;
+              height: 4px !important;
+              background-color: transparent !important;
+              border: none !important;
+              --progressBar-percent: 0%;
+              --progressBar-end-offset: 0;
+            `;
+            
+            // 确保内部 progress 和 glimmer 元素样式正确
+            const progressBar = loadingBar.querySelector('.progress');
+            const glimmer = loadingBar.querySelector('.glimmer');
+            
+            if (progressBar) {
+              progressBar.style.cssText = `
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-color: #3399ff !important;
+                transform: scaleX(var(--progressBar-percent)) !important;
+                transform-origin: left 0 !important;
+                overflow: hidden !important;
+                transition: transform 200ms !important;
+              `;
+            }
+            
+            if (glimmer) {
+              // 禁用虚线效果，让glimmer元素隐藏
+              glimmer.style.cssText = `
+                display: none !important;
+              `;
+            }
+          }
+          
+          // 调整主容器位置，移除工具栏高度偏移
+          if (mainContainer) {
+            mainContainer.style.insetBlockStart = "0";
+          }
+          
+          if (viewerContainer) {
+            viewerContainer.style.inset = "0";
+          }
+        } else if (toolbarParam === "1") {
+          // 恢复显示工具栏和侧边栏
+          const toolbar = document.querySelector(".toolbar");
+          const sidebarContainer = document.getElementById("sidebarContainer");
+          const mainContainer = document.getElementById("mainContainer");
+          const viewerContainer = document.getElementById("viewerContainer");
+          
+          if (toolbar) {
+            toolbar.style.display = "";
+          }
+          
+          if (sidebarContainer) {
+            sidebarContainer.style.display = "";
+          }
+          
+          // 恢复主容器位置
+          if (mainContainer) {
+            mainContainer.style.insetBlockStart = "";
+          }
+          
+          if (viewerContainer) {
+            viewerContainer.style.inset = "";
+          }
+        }
+      }
       return;
     }
     dest = unescape(hash);
@@ -17874,6 +17972,85 @@ function getViewerConfiguration() {
 }
 function webViewerLoad() {
   const config = getViewerConfiguration();
+  
+  // 处理工具栏隐藏参数 ?b=0 隐藏工具栏, ?b=1 显示工具栏, 默认显示
+  const urlParams = parseQueryString(window.location.search);
+  if (urlParams.has("b")) {
+    const toolbarParam = urlParams.get("b");
+    if (toolbarParam === "0") {
+      // 完全隐藏工具栏和侧边栏，但保留进度条在顶部
+      const toolbar = document.querySelector(".toolbar");
+      const sidebarContainer = document.getElementById("sidebarContainer");
+      const loadingBar = document.getElementById("loadingBar");
+      const mainContainer = document.getElementById("mainContainer");
+      const viewerContainer = document.getElementById("viewerContainer");
+      
+      if (toolbar) {
+        toolbar.style.display = "none";
+      }
+      
+      if (sidebarContainer) {
+        sidebarContainer.style.display = "none";
+      }
+      
+      // 将进度条移到顶部，脱离工具栏容器，并复制原有样式
+      if (loadingBar && document.body) {
+        // 先移到 body 下
+        document.body.appendChild(loadingBar);
+        
+        // 应用顶部固定定位样式
+        loadingBar.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          z-index: 9999 !important;
+          height: 4px !important;
+          background-color: transparent !important;
+          border: none !important;
+          --progressBar-percent: 0%;
+          --progressBar-end-offset: 0;
+        `;
+        
+        // 确保内部 progress 和 glimmer 元素样式正确
+        const progressBar = loadingBar.querySelector('.progress');
+        const glimmer = loadingBar.querySelector('.glimmer');
+        
+        if (progressBar) {
+          progressBar.style.cssText = `
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: #3399ff !important;
+            transform: scaleX(var(--progressBar-percent)) !important;
+            transform-origin: left 0 !important;
+            overflow: hidden !important;
+            transition: transform 200ms !important;
+          `;
+        }
+        
+        if (glimmer) {
+          // 禁用虚线效果，让glimmer元素隐藏
+          glimmer.style.cssText = `
+            display: none !important;
+          `;
+        }
+      }
+      
+      // 调整主容器位置，移除工具栏高度偏移
+      if (mainContainer) {
+        mainContainer.style.insetBlockStart = "0";
+      }
+      
+      if (viewerContainer) {
+        viewerContainer.style.inset = "0";
+      }
+    }
+    // ?b=1 或其他值默认显示工具栏，无需额外处理
+  }
+  
   const event = new CustomEvent("webviewerloaded", {
     bubbles: true,
     cancelable: true,
