@@ -70,3 +70,23 @@ stop:
 logs:
 	@echo "📋 查看容器日志..."
 	docker logs -f $(CONTAINER_NAME)
+
+# 打包项目
+pack:
+	@echo "打包项目为 zip 文件..."
+	@PROJECT_NAME="pdf-viewer-$$(date +%Y%m%d-%H%M%S)"; \
+	ZIP_FILE="$$PROJECT_NAME.zip"; \
+	echo "创建压缩包: $$ZIP_FILE"; \
+	zip -r "$$ZIP_FILE" \
+		Makefile \
+		Dockerfile \
+		generic/ \
+		-x "*.git*" "*.DS_Store" "*.log" "*~" "*.tmp" ".vscode/*" ".claude/*" \
+		2>/dev/null || { \
+			echo "错误: zip 命令未找到，请安装 zip 工具"; \
+			echo "Ubuntu/Debian: sudo apt install zip"; \
+			echo "macOS: brew install zip"; \
+			exit 1; \
+		}; \
+	echo "打包完成: $$ZIP_FILE"; \
+	ls -lh "$$ZIP_FILE"
