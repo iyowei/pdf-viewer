@@ -15,7 +15,16 @@ Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划
 
 查看 @Makefile 了解当前具体既有指令。
 
-@Makefile 使用非空格缩进。
+@Makefile 使用 tab 缩进（非空格）缩进。
+
+Makefile 里管理如下指令，
+
+1. 复合任务：重新部署
+2. 删除容器
+3. 删除镜像
+4. 清理 Docker
+5. 构建镜像
+6. 运行容器
 
 ## "构建时间" 标签
 
