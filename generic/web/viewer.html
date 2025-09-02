@@ -20,45 +20,16 @@ Adobe CMap resources are covered by their own copyright but the same license:
 
 See https://github.com/adobe-type-tools/cmap-resources
 -->
-<html dir="ltr" mozdisallowselectionprint class="is-light">
+<html dir="ltr" mozdisallowselectionprint>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
-    <title>融脉 PDF 阅读器</title>
-
-    <script>
-      // 获取 URL 查询参数，参数规则为：【主题 - ”l“ | "d"】
-      const urlParams = new URLSearchParams(window.location.search)
-      const themeParams = urlParams.get("theme")
-      let themeRes = themeParams ?? "default-l"
-
-      const [theme, cs] = themeRes.split("-")
-
-      // 根据 cs 参数切换 class
-      if (cs === "l") {
-        document.documentElement.classList.add("is-light")
-        document.documentElement.classList.remove("is-dark")
-      } else if (cs === "d") {
-        document.documentElement.classList.add("is-dark")
-        document.documentElement.classList.remove("is-light")
-      }
-
-      const toolbarParams = urlParams.get("toolbar")
-      
-      // 如果 toolbar 参数不是 true，则隐藏工具栏和侧边栏
-      if(toolbarParams !== 'true') {
-        // 在head中创建style标签直接隐藏 toolbar 和 sidebar，避免 DOM 加载延迟问题
-        const style = document.createElement('style')
-        style.textContent = ':root { --toolbar-height: 0px !important; } #toolbarViewer { display: none !important; height: 0 !important; } #sidebarContainer { visibility: hidden !important; inset-inline-start: calc(-1 * var(--sidebar-width)) !important; } #viewerContainer { inset-inline-start: 0 !important; }'
-        document.head.appendChild(style)
-      }
-
-    </script>
+    <title>PDF.js viewer</title>
 
 <!-- This snippet is used in production (included from viewer.html) -->
 <link rel="resource" type="application/l10n" href="locale/locale.json">
-<script src="pdf.mjs" type="module"></script>
+<script src="../build/pdf.mjs" type="module"></script>
 
     <link rel="stylesheet" href="viewer.css">
 
@@ -66,8 +37,8 @@ See https://github.com/adobe-type-tools/cmap-resources
   </head>
 
   <body tabindex="0">
-    <span id="viewer-alert" class="visuallyHidden" role="alert"></span>
     <div id="outerContainer">
+      <span id="viewer-alert" class="visuallyHidden" role="alert"></span>
 
       <div id="sidebarContainer">
         <div id="toolbarSidebar" class="toolbarHorizontalGroup">
@@ -213,6 +184,25 @@ See https://github.com/adobe-type-tools/cmap-resources
               </div>
               <div id="toolbarViewerRight" class="toolbarHorizontalGroup">
                 <div id="editorModeButtons" class="toolbarHorizontalGroup" role="radiogroup">
+                  <div id="editorComment" class="toolbarButtonWithContainer" hidden="true">
+                    <button id="editorCommentButton" class="toolbarButton" type="button" tabindex="0" disabled="disabled" role="radio" aria-expanded="false" aria-haspopup="true" aria-controls="editorCommentParamsToolbar" data-l10n-id="pdfjs-editor-comment-button">
+                      <span data-l10n-id="pdfjs-editor-comment-button-label"></span>
+                    </button>
+                    <div class="editorParamsToolbar sidebar hidden menu" id="editorCommentParamsToolbar">
+                      <div id="editorCommentsSidebar" class="menuContainer" role="landmark" aria-labelledby="editorCommentsSidebarHeader">
+                        <div id="editorCommentsSidebarHeader" role="heading" aria-level="2">
+                          <span class="commentCount">
+                            <span id="editorCommentsSidebarTitle" data-l10n-id="pdfjs-editor-comments-sidebar-title" data-l10n-args='{ "count": 0 }'></span>
+                            <span id="editorCommentsSidebarCount"></span>
+                          </span>
+                          <button id="editorCommentsSidebarCloseButton" type="button" tabindex="0" data-l10n-id="pdfjs-editor-comments-sidebar-close-button">
+                            <span data-l10n-id="pdfjs-editor-comments-sidebar-close-button-label"></span>
+                          </button>
+                        </div>
+                        <ul id="editorCommentsSidebarList"></ul>
+                      </div>
+                    </div>
+                  </div>
                   <div id="editorSignature" class="toolbarButtonWithContainer" hidden="true">
                     <button id="editorSignatureButton" class="toolbarButton" type="button" tabindex="0" disabled="disabled" role="radio" aria-expanded="false" aria-haspopup="true" aria-controls="editorSignatureParamsToolbar" data-l10n-id="pdfjs-editor-signature-button">
                       <span data-l10n-id="pdfjs-editor-signature-button-label"></span>
@@ -696,8 +686,8 @@ See https://github.com/adobe-type-tools/cmap-resources
               <div id="addSignatureError" hidden="true" class="messageBar">
                 <div>
                   <div>
-                    <span class="title" data-l10n-id="pdfjs-editor-add-signature-image-upload-error-title"></span>
-                    <span class="description" data-l10n-id="pdfjs-editor-add-signature-image-upload-error-description"></span>
+                    <span id="addSignatureErrorTitle" class="title" data-l10n-id="pdfjs-editor-add-signature-image-upload-error-title"></span>
+                    <span id="addSignatureErrorDescription" class="description" data-l10n-id="pdfjs-editor-add-signature-image-upload-error-description"></span>
                   </div>
                   <button id="addSignatureErrorCloseButton" class="closeButton" type="button" tabindex="0"><span data-l10n-id="pdfjs-editor-add-signature-error-close-button"></span></button>
                 </div>
@@ -728,6 +718,37 @@ See https://github.com/adobe-type-tools/cmap-resources
           <div class="dialogButtonsGroup">
             <button id="editSignatureCancelButton" type="button" class="secondaryButton" tabindex="0"><span data-l10n-id="pdfjs-editor-add-signature-cancel-button"></span></button>
             <button id="editSignatureUpdateButton" type="button" class="primaryButton" disabled tabindex="0"><span data-l10n-id="pdfjs-editor-edit-signature-update-button"></span></button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog class="dialog commentManager" id="commentManagerDialog">
+        <div class="mainContainer">
+          <div id="commentManagerToolbar">
+            <button id="commentActionsButton" class="toolbarButton" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="commentActionsMenu" tabindex="0" data-l10n-id="pdfjs-editor-edit-comment-actions-button">
+              <span data-l10n-id="pdfjs-editor-edit-comment-actions-button-label"></span>
+            </button>
+            <menu class="hidden" role="menu" id="commentActionsMenu">
+              <button id="commentActionsEditButton" role="menuitem" type="button" tabindex="0">
+                <span data-l10n-id="pdfjs-editor-edit-comment-actions-edit-button-label"></span>
+              </button>
+              <button id="commentActionsDeleteButton" role="menuitem" type="button" tabindex="0">
+                <span data-l10n-id="pdfjs-editor-edit-comment-actions-delete-button-label"></span>
+              </button>
+            </menu>
+            <button id="commentCloseButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-editor-edit-comment-close-button">
+              <span data-l10n-id="pdfjs-editor-edit-comment-close-button-label"></span>
+            </button>
+          </div>
+          <textarea class="hidden" id="commentManagerTextInput" data-l10n-id="pdfjs-editor-edit-comment-manager-text-input"></textarea>
+          <div class="hidden" id="commentManagerTextView"></div>
+          <div class="dialogButtonsGroup">
+            <button id="commentManagerCancelButton" type="button" class="secondaryButton" tabindex="0">
+              <span data-l10n-id="pdfjs-editor-edit-comment-manager-cancel-button"></span>
+            </button>
+            <button id="commentManagerSaveButton" type="button" class="primaryButton" disabled tabindex="0">
+              <span data-l10n-id="pdfjs-editor-edit-comment-manager-save-button"></span>
+            </button>
           </div>
         </div>
       </dialog>
