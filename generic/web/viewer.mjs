@@ -1555,7 +1555,12 @@ class BasePreferences {
       }
       AppOptions.setAll({
         ...browserPrefs,
-        ...prefs
+        ...prefs,
+        viewerCssTheme: (() => {
+          const urlParams = parseQueryString(window.location.search);
+          const theme = urlParams.get('t');
+          return theme ? parseInt(theme, 10) || 0 : 1;
+        })()
       }, true);
     });
   }

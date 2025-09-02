@@ -30,24 +30,6 @@ See https://github.com/adobe-type-tools/cmap-resources
     <meta name="google" content="notranslate" />
     <title>PDF.js viewer</title>
 
-    <script>
-      // 获取 URL 查询参数，参数规则为：【主题 - ”l“ | "d"】
-      const urlParams = new URLSearchParams(window.location.search);
-      const themeParams = urlParams.get('theme');
-      let themeRes = themeParams ?? 'default-l';
-
-      const [theme, cs] = themeRes.split('-');
-
-      // 根据 cs 参数切换 class
-      if (cs === 'l') {
-        document.documentElement.classList.add('is-light');
-        document.documentElement.classList.remove('is-dark');
-      } else if (cs === 'd') {
-        document.documentElement.classList.add('is-dark');
-        document.documentElement.classList.remove('is-light');
-      }
-    </script>
-
     <!-- This snippet is used in production (included from viewer.html) -->
     <link rel="resource" type="application/l10n" href="locale/locale.json" />
     <script src="pdf.mjs" type="module"></script>
