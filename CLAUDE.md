@@ -29,6 +29,8 @@ Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划
 
 @Makefile 使用 tab 缩进（非空格）缩进。
 
+@Makefile 里用到的指令得兼容 macOS 和 linux 系统。
+
 @Makefile 里管理如下指令，
 
 1. 复合任务：重新部署
@@ -37,6 +39,8 @@ Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划
 4. 清理 Docker
 5. 构建镜像
 6. 运行容器
+
+
 
 ## "构建时间" 标签
 
