@@ -23,6 +23,16 @@
 
 Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划线 + 全大写)。如：SYSTEM_AUDIT_AND_OPTIMIZATION_REPORT.md。
 
+## "构建时间" 标签
+
+在 `<html>` 标签中增加 `data-time` 属性，将构建时间赋值其中，使用 date-fns 模块格式化为 `yyyy/MM/dd-HH:mm:ss`，时区为 `Asia/Shanghai`。
+
+## 部署
+
+使用 Docker 容器部署。
+
+执行 `make build`、`make deploy` 这俩指令时，在 `<html>` 标签中增加 `data-time` 属性，将构建时间赋值其中，格式化为 `yyyy/MM/dd-HH:mm:ss`，时区为 `Asia/Shanghai`。
+
 ## Makefile
 
 查看 @Makefile 了解当前具体既有指令。
@@ -40,17 +50,7 @@ Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划
 5. 构建镜像
 6. 运行容器
 
-
-
-## "构建时间" 标签
-
-在 `<html>` 标签中增加 `data-time` 属性，将构建时间赋值其中，使用 date-fns 模块格式化为 `yyyy/MM/dd-HH:mm:ss`，时区为 `Asia/Shanghai`。
-
-## 部署
-
-使用 Docker 容器部署。
-
-执行 `make build`、`make deploy` 这俩指令时，在 `<html>` 标签中增加 `data-time` 属性，将构建时间赋值其中，格式化为 `yyyy/MM/dd-HH:mm:ss`，时区为 `Asia/Shanghai`。
+`make pack` 指令不应该修改任何源码，这个指令应该是会先将项目内文件拷贝到一个临时目录，在临时目录里添加构建时间等，打包后，再将这个临时目录移除。
 
 ## 其它
 

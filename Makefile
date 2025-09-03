@@ -78,17 +78,34 @@ pack:
 	@echo "打包项目为 zip 文件..."
 	@PROJECT_NAME="pdf-viewer-$$(date +%Y%m%d-%H%M%S)"; \
 	ZIP_FILE="$$PROJECT_NAME.zip"; \
+	TEMP_DIR="/tmp/$$PROJECT_NAME"; \
+	BUILD_TIME=$$(TZ=Asia/Shanghai date +'%Y/%m/%d-%H:%M:%S' 2>/dev/null || date +'%Y/%m/%d-%H:%M:%S'); \
+	echo "创建临时目录: $$TEMP_DIR"; \
+	rm -rf "$$TEMP_DIR"; \
+	mkdir -p "$$TEMP_DIR"; \
+	echo "拷贝文件到临时目录..."; \
+	cp -r Makefile Dockerfile generic/ "$$TEMP_DIR/"; \
+	echo "在临时目录中添加构建时间..."; \
+	if command -v gsed >/dev/null 2>&1; then \
+		gsed -i "s/ data-time=\"[^\"]*\"//g; s|<html|& data-time=\"$$BUILD_TIME\"|" "$$TEMP_DIR/generic/web/viewer.html"; \
+	elif sed --version 2>&1 | grep -q "GNU"; then \
+		sed -i "s/ data-time=\"[^\"]*\"//g; s|<html|& data-time=\"$$BUILD_TIME\"|" "$$TEMP_DIR/generic/web/viewer.html"; \
+	else \
+		sed -i '' -e "s/ data-time=\"[^\"]*\"//g" -e "s|<html|& data-time=\"$$BUILD_TIME\"|" "$$TEMP_DIR/generic/web/viewer.html"; \
+	fi; \
 	echo "创建压缩包: $$ZIP_FILE"; \
-	zip -r "$$ZIP_FILE" \
-		Makefile \
-		Dockerfile \
-		generic/ \
+	cd "$$TEMP_DIR" && zip -r "../$$ZIP_FILE" . \
 		-x "*.git*" "*.DS_Store" "*.log" "*~" "*.tmp" ".vscode/*" ".claude/*" \
 		2>/dev/null || { \
 			echo "错误: zip 命令未找到，请安装 zip 工具"; \
 			echo "Ubuntu/Debian: sudo apt install zip"; \
 			echo "macOS: brew install zip"; \
+			rm -rf "$$TEMP_DIR"; \
 			exit 1; \
 		}; \
+	cd - >/dev/null; \
+	mv "$$TEMP_DIR/../$$ZIP_FILE" "./$$ZIP_FILE"; \
+	echo "清理临时目录..."; \
+	rm -rf "$$TEMP_DIR"; \
 	echo "打包完成: $$ZIP_FILE"; \
 	ls -lh "$$ZIP_FILE"
