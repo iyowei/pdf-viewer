@@ -43,7 +43,7 @@ See https://github.com/adobe-type-tools/cmap-resources
         const urlParams = new URLSearchParams(window.location.search);
         const style = document.createElement('style');
         let cssRules = [];
-        
+
         // 处理工具栏隐藏参数 ?b=0
         if (urlParams.has('b') && urlParams.get('b') === '0') {
           cssRules.push(`
@@ -53,7 +53,7 @@ See https://github.com/adobe-type-tools/cmap-resources
             #viewerContainer { inset: 0 !important; }
           `);
         }
-        
+
         // 处理主题切换参数 ?t=1 (亮色) ?t=2 (暗色) 无参数(跟随系统)
         if (urlParams.has('t')) {
           const theme = urlParams.get('t');
@@ -83,7 +83,7 @@ See https://github.com/adobe-type-tools/cmap-resources
           // 设置HTML属性为0(自动跟随系统)
           document.documentElement.setAttribute('data-pdfjstheme', '0');
         }
-        
+
         // 应用所有CSS规则
         if (cssRules.length > 0) {
           style.textContent = cssRules.join('\n');
