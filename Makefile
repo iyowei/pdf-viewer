@@ -10,9 +10,7 @@ PORT := 6781
 # 默认目标
 .PHONY: help
 help:
-	help:
 	@printf "PDF 阅读器 Makefile 指令:\n  deploy        - 重新部署 (删除容器、镜像、清理 Docker、构建、运行)\n  rm-container  - 删除容器\n  rm-image      - 删除镜像\n  clean-docker  - 清理 Docker\n  build         - 构建镜像\n  run           - 运行容器\n  stop          - 停止容器\n  logs          - 查看容器日志\n"
-
 
 # 复合任务：重新部署
 .PHONY: deploy
@@ -44,9 +42,15 @@ clean-docker:
 .PHONY: build
 build:
 	@echo "📝 Injecting build time..."
-	$(eval BUILD_TIME := $(shell TZ='Asia/Shanghai' date +'%Y/%m/%d-%H:%M:%S'))
+	$(eval BUILD_TIME := $(shell TZ=Asia/Shanghai date +'%Y/%m/%d-%H:%M:%S' 2>/dev/null || date +'%Y/%m/%d-%H:%M:%S'))
 	# Use sed to replace the data-time attribute. This is idempotent.
-	sed -i '' -e 's/ data-time="[^"]*"//g' -e 's|<html|& data-time="$(BUILD_TIME)"|' "generic/web/viewer.html"
+	@if command -v gsed >/dev/null 2>&1; then \
+		gsed -i 's/ data-time="[^"]*"//g; s|<html|& data-time="$(BUILD_TIME)"|' "generic/web/viewer.html"; \
+	elif sed --version 2>&1 | grep -q "GNU"; then \
+		sed -i 's/ data-time="[^"]*"//g; s|<html|& data-time="$(BUILD_TIME)"|' "generic/web/viewer.html"; \
+	else \
+		sed -i '' -e 's/ data-time="[^"]*"//g' -e 's|<html|& data-time="$(BUILD_TIME)"|' "generic/web/viewer.html"; \
+	fi
 	@echo "🔨 构建镜像 $(IMAGE_NAME):$(TAG)..."
 	docker build . -t $(IMAGE_NAME):1.0.0 -t $(IMAGE_NAME):$(TAG) -f ./Dockerfile
 
