@@ -84,7 +84,7 @@ pack:
 	rm -rf "$$TEMP_DIR"; \
 	mkdir -p "$$TEMP_DIR"; \
 	echo "拷贝文件到临时目录..."; \
-	cp -r Makefile Dockerfile generic/ "$$TEMP_DIR/"; \
+	cp -r Makefile Dockerfile generic "$$TEMP_DIR/"; \
 	echo "在临时目录中添加构建时间..."; \
 	if command -v gsed >/dev/null 2>&1; then \
 		gsed -i "s/ data-time=\"[^\"]*\"//g; s|<html|& data-time=\"$$BUILD_TIME\"|" "$$TEMP_DIR/generic/web/viewer.html"; \
