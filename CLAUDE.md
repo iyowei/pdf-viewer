@@ -1,6 +1,6 @@
-## JESSE
+# 开箱即用 PDF Web 阅读器
 
-基于 [mozilla/pdf.js](https://github.com/mozilla/pdf.js) v5.3.93 实现的 PDF 阅读器。
+基于 [mozilla/pdf.js](https://github.com/mozilla/pdf.js) v5.3.93 实现的开箱即用 PDF Web 阅读器。
 
 ## 关联信息
 
@@ -29,7 +29,7 @@ Markdown 文件都用英文命名，命名风格微 Screaming Snake Case (下划
 
 @Makefile 使用 tab 缩进（非空格）缩进。
 
-Makefile 里管理如下指令，
+@Makefile 里管理如下指令，
 
 1. 复合任务：重新部署
 2. 删除容器
@@ -46,9 +46,13 @@ Makefile 里管理如下指令，
 
 使用 Docker 容器部署。
 
+执行 `make build`、`make deploy` 这俩指令时，在 `<html>` 标签中增加 `data-time` 属性，将构建时间赋值其中，格式化为 `yyyy/MM/dd-HH:mm:ss`，时区为 `Asia/Shanghai`。
+
 ## 其它
 
-用中文回复对话消息、编写代码注释等。
+用中文回复对话消息等。
+
+生成的代码需要将原本代码里的所有内容考虑进来生成，包括注释，不能发生 "原本有注释，新生成的代码却把注释删除了" 的情况。
 
 修改/删除文件前，先备份文件，文件名后附加精确到秒的日期，且附加上一份文件是被删除还是修改的标识。
 
